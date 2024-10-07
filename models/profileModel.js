@@ -1,4 +1,3 @@
-// models/profileModel.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
@@ -11,7 +10,7 @@ const Profile = sequelize.define('Profile', {
   role: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    defaultValue: 'user' 
   }
 }, {
   timestamps: false,

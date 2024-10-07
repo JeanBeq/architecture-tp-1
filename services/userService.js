@@ -7,6 +7,11 @@ exports.getAllUsers = async () => {
 };
 
 exports.createUser = async (userData) => {
+  const profile = await Profile.findOrCreate({
+    where: { id: userData.profileId || 1 }, 
+    defaults: { role: 'user' }
+  });
+  userData.profileId = profile[0].id;
   return await User.create(userData);
 };
 

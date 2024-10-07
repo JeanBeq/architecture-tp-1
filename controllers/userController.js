@@ -14,7 +14,11 @@ exports.getAllUsers = async (req, res) => {
 exports.createUser = async (req, res) => {
   try {
     const { email, lastName, firstName, phoneNumber, profileId } = req.body;
-    const newUser = await User.create({ email, lastName, firstName, phoneNumber, profileId });
+    const profile = await Profile.findOrCreate({
+      where: { id: profileId || 1 },
+      defaults: { role: 'user' }
+    });
+    const newUser = await User.create({ email, lastName, firstName, phoneNumber, profileId: profile[0].id });
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
