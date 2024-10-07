@@ -1,7 +1,8 @@
+// src/infrastructure/orm/sequelize/models/profileModel.js
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const sequelize = require('../../../../config/database');
 
-const Profile = sequelize.define('Profile', {
+const ProfileModel = sequelize.define('Profile', {
   id: {
     type: DataTypes.TINYINT,
     autoIncrement: true,
@@ -10,11 +11,11 @@ const Profile = sequelize.define('Profile', {
   role: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'user' 
+    defaultValue: 'user'
   }
 }, {
   timestamps: false,
   tableName: 'profile'
 });
 
-module.exports = Profile;
+module.exports = ProfileModel;

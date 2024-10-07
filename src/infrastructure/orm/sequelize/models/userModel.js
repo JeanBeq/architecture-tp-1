@@ -1,9 +1,9 @@
-// models/userModel.js
+// src/infrastructure/orm/sequelize/models/userModel.js
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const sequelize = require('../../../../config/database');
 const Profile = require('./profileModel');
 
-const User = sequelize.define('User', {
+const UserModel = sequelize.define('User', {
   id: {
     type: DataTypes.TINYINT,
     autoIncrement: true,
@@ -39,7 +39,7 @@ const User = sequelize.define('User', {
   tableName: 'user'
 });
 
-Profile.hasMany(User, { foreignKey: 'profileId' });
-User.belongsTo(Profile, { foreignKey: 'profileId' });
+Profile.hasMany(UserModel, { foreignKey: 'profileId' });
+UserModel.belongsTo(Profile, { foreignKey: 'profileId' });
 
-module.exports = User;
+module.exports = UserModel;

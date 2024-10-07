@@ -1,10 +1,13 @@
-// controllers/userController.js
-const User = require('../src/domain/models/user');
-const Profile = require('../src/domain/models/profile');
+// src/interfaces/http/userController.js
+const UserService = require('../../domain/services/userService');
+const UserModel = require('../../infrastructure/orm/sequelize/models/userModel');
+const ProfileModel = require('../../infrastructure/orm/sequelize/models/profileModel');
+
+const userService = new UserService(UserModel, ProfileModel);
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll({ include: Profile });
+    const users = await userService.getAllUsers();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,11 +17,7 @@ exports.getAllUsers = async (req, res) => {
 exports.createUser = async (req, res) => {
   try {
     const { email, lastName, firstName, phoneNumber, profileId } = req.body;
-    const profile = await Profile.findOrCreate({
-      where: { id: profileId || 1 },
-      defaults: { role: 'user' }
-    });
-    const newUser = await User.create({ email, lastName, firstName, phoneNumber, profileId: profile[0].id });
+    const newUser = await userService.createUser({ email, lastName, firstName, phoneNumber, profileId });
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -29,16 +28,10 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { email, lastName, firstName, phoneNumber, profileId } = req.body;
-    const user = await User.findByPk(id);
+    const user = await userService.updateUser(id, { email, lastName, firstName, phoneNumber, profileId });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    user.email = email;
-    user.lastName = lastName;
-    user.firstName = firstName;
-    user.phoneNumber = phoneNumber;
-    user.profileId = profileId;
-    await user.save();
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -48,11 +41,7 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    await user.destroy();
+    await userService.deleteUser(id);
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });
